@@ -8,5 +8,7 @@ class AnalyzeRequest(BaseModel):
 class AnalyzeResponse(BaseModel):
     id: int
     title: str
+    code: str
     result: str
+    language: str
     created_at: datetime
