@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactMarkdown from 'react-markdown';
+import { analyzeCode } from "../services/analysisService";
 
 function Home({ onLogout }) {
   const [code, setCode] = useState("");
@@ -14,27 +14,18 @@ function Home({ onLogout }) {
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    try {
-      const res = await axios.post(
-        "http://localhost:8000/analyze",
-        { code, language },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      const raw = res.data.result;
-      const parts = raw.split("```");
-      setResultText(parts[0]);
-      setCodeBlock(parts[1] || "");
-      setShowCodeBlock(false);
-    } catch (err) {
-      setResultText("⚠️ Analiz hatası.");
-      setCodeBlock("");
-    }
-  };
+  try {
+    const data = await analyzeCode(code, language);
+    const raw = data.result;
+    const parts = raw.split("```");
+    setResultText(parts[0]);
+    setCodeBlock(parts[1] || "");
+    setShowCodeBlock(false);
+  } catch (err) {
+    setResultText("⚠️ Analiz hatası.");
+    setCodeBlock("");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">

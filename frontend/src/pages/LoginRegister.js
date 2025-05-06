@@ -1,6 +1,6 @@
 // src/LoginRegister.js
 import React, { useState } from "react";
-import axios from "axios";
+import { login, register } from "../services/authService";
 
 export default function LoginRegister({ onAuthSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,25 +11,17 @@ export default function LoginRegister({ onAuthSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
     try {
-      if (isLogin) {
-        const res = await axios.post("http://localhost:8000/auth/login", {
-          email,
-          password,
-        });
-        localStorage.setItem("token", res.data.access_token);
-        onAuthSuccess();
-      } else {
-        await axios.post("http://localhost:8000/auth/register", {
-          name,
-          email,
-          password,
-        });
-        setIsLogin(true); // Kayıttan sonra giriş ekranına dön
-      }
+      const userData = isLogin
+        ? { email, password }
+        : { name, email, password };
+
+      const data = isLogin ? await login(userData) : await register(userData);
+
+      localStorage.setItem("token", data.access_token);
+      onAuthSuccess();
     } catch (err) {
-      setError("⚠️ " + (err.response?.data?.detail || "Bir hata oluştu"));
+      setError("🚫 Giriş veya kayıt başarısız. Lütfen tekrar deneyin.");
     }
   };
 
