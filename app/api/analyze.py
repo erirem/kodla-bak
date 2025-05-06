@@ -7,6 +7,7 @@ from app.models.user import User
 from app.schemas.analyze import AnalyzeRequest, AnalyzeResponse
 from app.utils.auth import get_current_user
 from app.services.gemini_service import analyze_code_with_ai
+from typing import List
 
 router = APIRouter()
 
@@ -27,7 +28,9 @@ async def analyze_code(request: AnalyzeRequest, db: Session = Depends(get_db), c
     return {"result": ai_result}
 
 
-@router.get("/history", response_model=list[AnalyzeResponse])
-def get_analysis_history(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    history = db.query(Analysis).filter(Analysis.user_id == current_user.id).order_by(Analysis.created_at.desc()).all()
-    return [{"result": h.result} for h in history]
+@router.get("/history", response_model=List[AnalyzeResponse])
+def get_analysis_history(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return db.query(Analysis).filter(Analysis.user_id == current_user.id).order_by(Analysis.created_at.desc()).all()
