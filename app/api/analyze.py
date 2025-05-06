@@ -33,7 +33,8 @@ async def analyze_code(
     return {
         "id": analysis.id,
         "title": analysis.title,
-        "result": analysis.result
+        "result": analysis.result,
+        "created_at": analysis.created_at
     }
 
 
