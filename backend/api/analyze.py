@@ -37,8 +37,6 @@ async def analyze_code(
     }
 
 
-# backend/api/analyze_schema.py
-
 @router.get("/history", response_model=List[AnalyzeHistoryResponse])
 def get_history(
         db: Session = Depends(get_db),
