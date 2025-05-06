@@ -6,6 +6,6 @@ export const analyzeCode = async (code, language) => {
 };
 
 export const fetchHistory = async () => {
-  const response = await api.get("/history");
+  const response = await api.get("/analyze/history");
   return response.data;
 };

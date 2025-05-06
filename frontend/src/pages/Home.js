@@ -4,6 +4,8 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactMarkdown from 'react-markdown';
 import { analyzeCode } from "../services/analysisService";
+import { parseAnalysisResult } from "../utils/parseResult";
+import MarkdownRenderer from "../components/MarkdownRenderer";
 
 function Home({ onLogout }) {
   const [code, setCode] = useState("");
@@ -16,10 +18,9 @@ function Home({ onLogout }) {
   const handleSubmit = async () => {
   try {
     const data = await analyzeCode(code, language);
-    const raw = data.result;
-    const parts = raw.split("```");
-    setResultText(parts[0]);
-    setCodeBlock(parts[1] || "");
+    const { text, code: suggestion } = parseAnalysisResult(data.result);
+    setResultText(text);
+    setCodeBlock(suggestion);
     setShowCodeBlock(false);
   } catch (err) {
     setResultText("⚠️ Analiz hatası.");
@@ -78,20 +79,7 @@ function Home({ onLogout }) {
           <div className="bg-white p-4 mt-4 rounded-lg border">
             <h2 className="font-bold mb-2">AI Geri Bildirim:</h2>
 
-            <ReactMarkdown
-  components={{
-    h1: ({node, ...props}) => <h1 className="text-2xl font-bold my-2" {...props} />,
-    h2: ({node, ...props}) => <h2 className="text-xl font-semibold my-2" {...props} />,
-    p: ({node, ...props}) => <p className="mb-2 leading-relaxed" {...props} />,
-    ul: ({node, ...props}) => <ul className="list-disc ml-6 mb-2" {...props} />,
-    li: ({node, ...props}) => <li className="mb-1" {...props} />,
-    strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
-    em: ({node, ...props}) => <em className="italic" {...props} />,
-    // Diğer markdown elemanları için özelleştirme yapabilirsin
-  }}
->
-  {resultText}
-</ReactMarkdown>
+            <MarkdownRenderer>{resultText}</MarkdownRenderer>
 
             {codeBlock && (
               <>

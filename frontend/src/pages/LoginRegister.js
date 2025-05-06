@@ -1,4 +1,3 @@
-// src/LoginRegister.js
 import React, { useState } from "react";
 import { login, register } from "../services/authService";
 
