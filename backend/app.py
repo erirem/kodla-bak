@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth, analyze
-from app.db.database import Base, engine
-from app.models.user import User
-from app.models.analysis import Analysis
+from backend.api import auth, analyze
+from backend.db.database import Base, engine
+from backend.models.user import User
+from backend.models.analysis import Analysis
 app = FastAPI(
     title="KodlaBak",
     description="Yazılım öğrencileri için yapay zekâ destekli kod analiz ve mentorluk platformu",

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
-from app.db.database import Base
+from backend.db.database import Base
 
 class Analysis(Base):
     __tablename__ = "analyses"

@@ -1,12 +1,12 @@
-# app/api/analyze.py
-from fastapi import APIRouter, Depends, HTTPException, status
+# backend/api/analyze_schema.py
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.db.database import get_db
-from app.models.analysis import Analysis
-from app.models.user import User
-from app.schemas.analyze import AnalyzeRequest, AnalyzeResponse
-from app.utils.auth import get_current_user
-from app.services.gemini_service import analyze_code_with_ai
+from backend.db.database import get_db
+from backend.models.analysis import Analysis
+from backend.models.user import User
+from backend.schemas.analyze_schema import AnalyzeRequest, AnalyzeResponse
+from backend.auth.auth import get_current_user
+from backend.ai.gemini_service import analyze_code_with_ai
 from typing import List
 
 router = APIRouter()
@@ -38,7 +38,7 @@ async def analyze_code(
     }
 
 
-# app/api/analyze.py
+# backend/api/analyze_schema.py
 
 @router.get("/history", response_model=List[AnalyzeResponse])
 def get_history(
