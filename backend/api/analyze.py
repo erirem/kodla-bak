@@ -1,4 +1,3 @@
-# backend/api/analyze_schema.py
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from backend.db.database import get_db
@@ -11,11 +10,12 @@ from typing import List
 
 router = APIRouter()
 
+
 @router.post("/", response_model=AnalyzeResponse)
 async def analyze_code(
-    data: AnalyzeRequest,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+        data: AnalyzeRequest,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
 ):
     ai_response = await analyze_code_with_ai(data.code, data.language)
 
@@ -41,8 +41,8 @@ async def analyze_code(
 
 @router.get("/history", response_model=List[AnalyzeHistoryResponse])
 def get_history(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
 ):
     analyses = db.query(Analysis).filter(Analysis.user_id == current_user.id).order_by(Analysis.created_at.desc()).all()
     return analyses

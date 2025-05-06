@@ -9,6 +9,7 @@ genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel("models/gemini-1.5-pro")
 
+
 async def analyze_code_with_ai(code: str, language: str) -> dict:
     prompt = f"""
 Sen deneyimli bir yazılım mentorusun. Öğrencinin yazdığı {language} kodunu değerlendir:

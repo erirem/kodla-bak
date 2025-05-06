@@ -8,6 +8,7 @@ from backend.auth.token import create_access_token
 
 router = APIRouter()
 
+
 @router.post("/register")
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == user.email).first()
@@ -23,6 +24,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return {"message": "Kayıt başarılı 🎉"}
+
 
 @router.post("/login")
 def login_user(user: UserLogin, db: Session = Depends(get_db)):

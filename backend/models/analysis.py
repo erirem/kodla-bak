@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from backend.db.database import Base
 
+
 class Analysis(Base):
     __tablename__ = "analyses"
 
