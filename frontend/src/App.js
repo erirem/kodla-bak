@@ -6,6 +6,8 @@ import History from "./pages/History";
 import NotFound from "./pages/NotFound";
 import { jwtDecode } from "jwt-decode";
 import { useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
@@ -29,6 +31,7 @@ function App() {
           if (decoded.exp && decoded.exp < now) {
             localStorage.removeItem("token");
             setIsAuthenticated(false);
+            toast.info("Oturum süreniz doldu. Lütfen tekrar giriş yapın.");
           }
         } catch (err) {
           localStorage.removeItem("token");
@@ -38,6 +41,8 @@ function App() {
     }, []);
 
   return (
+  <>
+      <ToastContainer position="top-right" autoClose={3000} />
     <Routes>
       <Route
         path="/"
@@ -71,6 +76,7 @@ function App() {
       />
       <Route path="*" element={<NotFound />} />
     </Routes>
+  </>
   );
 }
 
