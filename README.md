@@ -40,6 +40,7 @@ GEMINI_API_KEY=your-gemini-api-key
 #### Run the backend:
 
 ```bash
+cd kodla-bak
 uvicorn backend.app:app --reload
 ```
 
