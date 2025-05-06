@@ -1,0 +1,44 @@
+# === PYTHON ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+.env
+.env.*
+venv/
+
+# allow example
+!.env.example
+
+# === FASTAPI / ALEMBIC ===
+alembic/versions/
+instance/
+*.log
+
+# === NODE & REACT ===
+frontend/node_modules/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/build/
+frontend/.next/
+frontend/coverage/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnp
+frontend/.pnp.js
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+.coverage
+htmlcov/
+*.pytest_cache/
