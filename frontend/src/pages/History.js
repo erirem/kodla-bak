@@ -1,55 +1,80 @@
+// src/pages/History.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import ReactMarkdown from "react-markdown";
 
-const History = () => {
+function History() {
   const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8000/analyze/history", {
+        const res = await axios.get("http://localhost:8000/analyze/history", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        setHistory(response.data);
-      } catch (error) {
-        console.error("Geçmiş yüklenemedi:", error);
-      } finally {
-        setLoading(false);
+        setHistory(res.data);
+      } catch (err) {
+        console.error("Geçmiş yüklenemedi", err);
       }
     };
 
     fetchHistory();
   }, []);
 
-  if (loading) return <p>Yükleniyor...</p>;
+  const toggleExpand = (id) => {
+    setExpandedId(expandedId === id ? null : id);
+  };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Kod Analiz Geçmişi</h2>
-      {history.length === 0 ? (
-        <p>Henüz analiz yapılmamış.</p>
-      ) : (
-        <ul className="space-y-4">
-          {history.map((item) => (
-            <li key={item.id} className="p-4 border rounded bg-white shadow">
-              <p className="text-sm text-gray-500 mb-1">
-                {new Date(item.created_at).toLocaleString()}
-              </p>
-              <pre className="bg-gray-100 p-2 rounded mb-2 overflow-x-auto">
-                {item.code}
-              </pre>
-              <p><strong>Sonuç:</strong> {item.result}</p>
-              <p className="text-sm text-right italic text-gray-500">{item.language.toUpperCase()}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="min-h-screen bg-gray-50 p-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">Analiz Geçmişi 📚</h1>
+
+      {history.map((item) => {
+        const [description, codeBlock] = item.result.split("```");
+
+        return (
+          <div key={item.id} className="mb-4 border rounded-lg bg-white shadow">
+            <button
+              onClick={() => toggleExpand(item.id)}
+              className="w-full text-left px-4 py-3 bg-indigo-100 hover:bg-indigo-200 font-semibold rounded-t"
+            >
+              {item.title} — <span className="text-sm text-gray-600">{new Date(item.created_at).toLocaleString()}</span>
+            </button>
+
+            {expandedId === item.id && (
+              <div className="p-4 space-y-4">
+                <ReactMarkdown
+                  components={{
+                    h2: ({node, ...props}) => <h2 className="text-xl font-bold my-2" {...props} />,
+                    p: ({node, ...props}) => <p className="mb-2 leading-relaxed" {...props} />,
+                    li: ({node, ...props}) => <li className="list-disc ml-6 mb-1" {...props} />,
+                  }}
+                >
+                  {description}
+                </ReactMarkdown>
+
+                {codeBlock && (
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-sm text-blue-600 hover:underline">
+                      Kod Önerisini Göster
+                    </summary>
+                    <SyntaxHighlighter language={item.language} style={oneDark} className="mt-2 rounded">
+                      {codeBlock}
+                    </SyntaxHighlighter>
+                  </details>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
-};
+}
 
 export default History;

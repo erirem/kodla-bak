@@ -12,25 +12,38 @@ from typing import List
 router = APIRouter()
 
 @router.post("/", response_model=AnalyzeResponse)
-async def analyze_code(request: AnalyzeRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    ai_result = await analyze_code_with_ai(request.code, request.language)
+async def analyze_code(
+    data: AnalyzeRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    ai_response = await analyze_code_with_ai(data.code, data.language)
 
-    new_analysis = Analysis(
-        code=request.code,
-        result=ai_result,
-        language=request.language,
+    analysis = Analysis(
+        title=ai_response["title"],
+        code=data.code,
+        result=ai_response["result"],
+        language=data.language,
         user_id=current_user.id
     )
-    db.add(new_analysis)
+    db.add(analysis)
     db.commit()
-    db.refresh(new_analysis)
+    db.refresh(analysis)
 
-    return new_analysis
+    return {
+        "id": analysis.id,
+        "title": analysis.title,
+        "result": analysis.result,
+        "created_at": analysis.created_at
+    }
 
+
+# app/api/analyze.py
 
 @router.get("/history", response_model=List[AnalyzeResponse])
-def get_analysis_history(
+def get_history(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user)
 ):
-    return db.query(Analysis).filter(Analysis.user_id == current_user.id).order_by(Analysis.created_at.desc()).all()
+    analyses = db.query(Analysis).filter(Analysis.user_id == current_user.id).order_by(Analysis.created_at.desc()).all()
+    return analyses
