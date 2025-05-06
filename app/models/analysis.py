@@ -7,6 +7,7 @@ class Analysis(Base):
     __tablename__ = "analyses"
 
     id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
     code = Column(Text, nullable=False)
     result = Column(Text, nullable=False)
     language = Column(String, nullable=False)
