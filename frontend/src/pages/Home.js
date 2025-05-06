@@ -1,12 +1,16 @@
-// src/pages/Home.js
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import ReactMarkdown from 'react-markdown';
 
 function Home({ onLogout }) {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("python");
-  const [result, setResult] = useState("");
+  const [resultText, setResultText] = useState("");
+  const [codeBlock, setCodeBlock] = useState("");
+  const [showCodeBlock, setShowCodeBlock] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
@@ -20,9 +24,15 @@ function Home({ onLogout }) {
           },
         }
       );
-      setResult(res.data.result);
+
+      const raw = res.data.result;
+      const parts = raw.split("```");
+      setResultText(parts[0]);
+      setCodeBlock(parts[1] || "");
+      setShowCodeBlock(false);
     } catch (err) {
-      setResult("⚠️ Analiz hatası.");
+      setResultText("⚠️ Analiz hatası.");
+      setCodeBlock("");
     }
   };
 
@@ -68,14 +78,50 @@ function Home({ onLogout }) {
         <button
           onClick={handleSubmit}
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg"
+
         >
           Analiz Et
         </button>
 
-        {result && (
+        {(resultText || codeBlock) && (
           <div className="bg-white p-4 mt-4 rounded-lg border">
             <h2 className="font-bold mb-2">AI Geri Bildirim:</h2>
-            <pre className="whitespace-pre-wrap">{result}</pre>
+
+            <ReactMarkdown
+  components={{
+    h1: ({node, ...props}) => <h1 className="text-2xl font-bold my-2" {...props} />,
+    h2: ({node, ...props}) => <h2 className="text-xl font-semibold my-2" {...props} />,
+    p: ({node, ...props}) => <p className="mb-2 leading-relaxed" {...props} />,
+    ul: ({node, ...props}) => <ul className="list-disc ml-6 mb-2" {...props} />,
+    li: ({node, ...props}) => <li className="mb-1" {...props} />,
+    strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
+    em: ({node, ...props}) => <em className="italic" {...props} />,
+    // Diğer markdown elemanları için özelleştirme yapabilirsin
+  }}
+>
+  {resultText}
+</ReactMarkdown>
+
+            {codeBlock && (
+              <>
+                <button
+                  onClick={() => setShowCodeBlock((prev) => !prev)}
+                  className="mb-2 text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded"
+                >
+                  {showCodeBlock ? "Kod Önerisini Gizle" : "Kod Önerisi"}
+                </button>
+
+                {showCodeBlock && (
+                  <SyntaxHighlighter
+                    language={language}
+                    style={oneDark}
+                    customStyle={{ borderRadius: "0.5rem" }}
+                  >
+                    {codeBlock}
+                  </SyntaxHighlighter>
+                )}
+              </>
+            )}
           </div>
         )}
       </div>
