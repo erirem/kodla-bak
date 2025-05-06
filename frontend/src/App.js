@@ -4,6 +4,9 @@ import LoginRegister from "./pages/LoginRegister";
 import Home from "./pages/Home";
 import History from "./pages/History";
 import NotFound from "./pages/NotFound";
+import { jwtDecode } from "jwt-decode";
+import { useEffect } from "react";
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -14,6 +17,25 @@ function App() {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
   };
+
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          const now = Date.now() / 1000;
+
+          if (decoded.exp && decoded.exp < now) {
+            localStorage.removeItem("token");
+            setIsAuthenticated(false);
+          }
+        } catch (err) {
+          localStorage.removeItem("token");
+          setIsAuthenticated(false);
+        }
+      }
+    }, []);
 
   return (
     <Routes>
