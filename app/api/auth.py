@@ -30,5 +30,5 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     if not db_user or not Hash.verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Geçersiz kimlik bilgileri.")
 
-    access_token = create_access_token(data={"sub": db_user.email})
+    access_token = create_access_token({"sub": str(db_user.id)})
     return {"access_token": access_token, "token_type": "bearer"}

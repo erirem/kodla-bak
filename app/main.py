@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import auth, analyze
 from app.db.database import Base, engine
-from app import models
-
+from app.models.user import User
+from app.models.analysis import Analysis
 app = FastAPI(
     title="KodlaBak",
     description="Yazılım öğrencileri için yapay zekâ destekli kod analiz ve mentorluk platformu",
@@ -12,6 +12,8 @@ app = FastAPI(
 
 print("Veritabanı tabloları oluşturuluyor...")
 Base.metadata.create_all(bind=engine)
+
+print(Base.metadata.tables.keys())
 
 app.add_middleware(
     CORSMiddleware,
