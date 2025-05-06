@@ -8,6 +8,11 @@ class AnalyzeRequest(BaseModel):
 class AnalyzeResponse(BaseModel):
     id: int
     title: str
+    result: str
+
+class AnalyzeHistoryResponse(BaseModel):
+    id: int
+    title: str
     code: str
     result: str
     language: str

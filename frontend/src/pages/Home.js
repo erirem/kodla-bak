@@ -14,8 +14,10 @@ function Home({ onLogout }) {
   const [codeBlock, setCodeBlock] = useState("");
   const [showCodeBlock, setShowCodeBlock] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+  setLoading(true);
   try {
     const data = await analyzeCode(code, language);
     const { text, code: suggestion } = parseAnalysisResult(data.result);
@@ -25,13 +27,15 @@ function Home({ onLogout }) {
   } catch (err) {
     setResultText("⚠️ Analiz hatası.");
     setCodeBlock("");
+  } finally {
+    setLoading(false);
   }
 };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">KodlaBak 🔍</h1>
+       <h1 className="text-3xl font-extrabold tracking-tight text-indigo-600">KodlaBak 🔍</h1>
         <div className="space-x-2">
           <button
             onClick={() => navigate("/history")}
@@ -50,14 +54,14 @@ function Home({ onLogout }) {
 
       <div className="max-w-3xl mx-auto space-y-4">
         <textarea
-          className="w-full h-60 p-4 border border-gray-300 rounded-lg"
+          className="w-full h-60 p-4 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
           placeholder="Kodunuzu buraya yazın..."
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
 
         <select
-          className="w-full p-2 border border-gray-300 rounded-lg"
+          className="w-full p-3 border border-gray-300 rounded-lg bg-white shadow-sm"
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
         >
@@ -68,16 +72,17 @@ function Home({ onLogout }) {
         </select>
 
         <button
-          onClick={handleSubmit}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg"
+            onClick={handleSubmit}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium shadow transition hover:shadow-lg disabled:opacity-50"
+            disabled={loading}
+          >
+            {loading ? "Analiz Ediliyor..." : "Analiz Et"}
+          </button>
 
-        >
-          Analiz Et
-        </button>
 
         {(resultText || codeBlock) && (
           <div className="bg-white p-4 mt-4 rounded-lg border">
-            <h2 className="font-bold mb-2">AI Geri Bildirim:</h2>
+          <h2 className="text-lg font-semibold text-indigo-700 border-l-4 border-indigo-600 pl-4 mb-3">AI Geri Bildirim</h2>
 
             <MarkdownRenderer>{resultText}</MarkdownRenderer>
 
