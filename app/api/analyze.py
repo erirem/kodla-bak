@@ -25,7 +25,7 @@ async def analyze_code(request: AnalyzeRequest, db: Session = Depends(get_db), c
     db.commit()
     db.refresh(new_analysis)
 
-    return {"result": ai_result}
+    return new_analysis
 
 
 @router.get("/history", response_model=List[AnalyzeResponse])
