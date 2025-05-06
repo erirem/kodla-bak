@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginRegister from "./pages/LoginRegister";
 import Home from "./pages/Home";
 import History from "./pages/History";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -46,6 +47,7 @@ function App() {
           )
         }
       />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
