@@ -15,6 +15,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Bu e-posta ile zaten kayıt olunmuş.")
 
     new_user = User(
+        name=user.name,
         email=user.email,
         hashed_password=Hash.hash_password(user.password)
     )

@@ -1,25 +1,52 @@
 import React, { useState } from "react";
+import LoginRegister from "./LoginRegister";
 import axios from "axios";
 
-export default function App() {
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("python");
   const [result, setResult] = useState("");
 
+  const handleLogout = () => {
+  localStorage.removeItem("token");
+  setIsAuthenticated(false);
+  };
   const handleSubmit = async () => {
     try {
-      const res = await axios.post("http://localhost:8000/analyze", {
-        code,
-        language,
-      });
+      const res = await axios.post(
+        "http://localhost:8000/analyze",
+        { code, language },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       setResult(res.data.result);
     } catch (err) {
-      setResult("⚠️ Analiz sırasında bir hata oluştu.");
+      setResult("⚠️ Analiz hatası.");
     }
   };
 
+  if (!isAuthenticated) {
+    return <LoginRegister onAuthSuccess={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <div className="flex justify-between items-center mb-6">
+  <h1 className="text-3xl font-bold">KodlaBak 🔍</h1>
+  <button
+    onClick={handleLogout}
+    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+  >
+    Çıkış Yap
+  </button>
+</div>
+
       <h1 className="text-3xl font-bold text-center mb-6">KodlaBak 🔍</h1>
 
       <div className="max-w-3xl mx-auto space-y-4">
@@ -58,3 +85,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;
